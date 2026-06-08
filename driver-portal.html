@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>V.A. Transportation — Driver Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--navy2:#0f1e35;--navy3:#162844;
+  --blue:#1a3a6e;--blue2:#4a8fc9;--blue3:rgba(74,143,201,.15);
+  --red:#c0392b;--red3:rgba(192,57,43,.12);
+  --text:#e8e6e0;--muted:#6a7f99;--border:rgba(255,255,255,.1);
+  --green:#4caf70;--gold:#c9a84c;
+}
+html,body{min-height:100vh;background:var(--navy);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--navy)}
+.login-card{width:380px;max-width:calc(100vw - 40px);background:var(--navy2);border:1px solid var(--border);border-radius:12px;padding:44px 36px;position:relative}
+.login-card::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.login-logo{text-align:center;margin-bottom:32px}
+.login-mark{width:56px;height:56px;border-radius:12px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--blue2);margin:0 auto 12px}
+.login-title{font-size:20px;font-weight:600;color:#fff;text-align:center}
+.login-sub{font-size:13px;color:var(--muted);text-align:center;margin-top:4px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:'DM Mono',monospace}
+.field input{width:100%;padding:13px 16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;outline:none;transition:border .2s;-webkit-appearance:none}
+.field input:focus{border-color:var(--blue2)}
+.field input::placeholder{color:rgba(106,127,153,.5)}
+.login-btn{width:100%;padding:14px;margin-top:8px;background:var(--red);color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.login-btn:hover{opacity:.88}
+.login-error{color:#e05c3a;font-size:12px;text-align:center;margin-top:10px;display:none}
+
+/* HEADER */
+.hdr{background:var(--navy2);border-bottom:1px solid var(--border);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.hdr-mark{width:36px;height:36px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--blue2);font-family:'DM Mono',monospace}
+.hdr-title{font-size:15px;font-weight:600;color:#fff}
+.hdr-sub{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-top:2px}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.hdr-name{font-size:12px;color:var(--muted)}
+.hdr-name span{color:var(--text)}
+.logout-btn{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* TABS */
+.tabs{display:flex;background:var(--navy2);border-bottom:1px solid var(--border);padding:0 20px}
+.tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:var(--blue2);border-bottom-color:var(--blue2)}
+
+/* MAIN */
+.main{padding:20px;max-width:560px;margin:0 auto;padding-bottom:100px}
+.mgr-main{padding:20px;max-width:900px;margin:0 auto;padding-bottom:80px}
+
+/* SECTIONS */
+.section{margin-bottom:24px}
+.section-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--blue2);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(74,143,201,.2)}
+
+.field2{margin-bottom:14px}
+.field2 label{display:block;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'DM Mono',monospace}
+.field2 input,.field2 select,.field2 textarea{width:100%;padding:13px 16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;outline:none;transition:border .2s;-webkit-appearance:none}
+.field2 input:focus,.field2 select:focus,.field2 textarea:focus{border-color:var(--blue2)}
+.field2 input::placeholder,.field2 textarea::placeholder{color:rgba(106,127,153,.6)}
+.field2 select option{background:var(--navy2)}
+.field2 textarea{resize:none;min-height:80px}
+
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.toggle-row{display:flex;gap:10px;margin-bottom:14px}
+.toggle-btn{flex:1;padding:12px;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.04);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;text-align:center}
+.toggle-btn.active{background:var(--blue3);border-color:var(--blue2);color:var(--blue2)}
+.toggle-label{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-family:'DM Mono',monospace}
+
+.leg-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
+.leg-title{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--blue2);margin-bottom:14px;font-family:'DM Mono',monospace}
+
+.submit-bar{position:fixed;bottom:0;left:0;right:0;padding:16px 20px;background:var(--navy2);border-top:1px solid var(--border);z-index:50}
+.submit-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--blue),#0d2a5a);border:1px solid var(--blue2);border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.submit-btn.success{background:linear-gradient(135deg,#1a5c2a,#0d3a1a);border-color:var(--green)}
+
+.result{margin:16px 0;padding:16px;border-radius:10px;font-size:14px;display:none;line-height:1.6;text-align:center}
+.result.success{background:rgba(76,175,112,.1);border:1px solid rgba(76,175,112,.3);color:var(--green)}
+.result.error{background:rgba(204,34,0,.1);border:1px solid rgba(204,34,0,.3);color:#ff6b4a}
+.trip-id{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;margin-bottom:4px}
+
+/* MANAGER DASHBOARD */
+.mgr-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.mgr-stat{background:var(--navy2);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center}
+.mgr-stat-val{font-size:28px;font-weight:700;color:var(--blue2);font-family:'DM Mono',monospace}
+.mgr-stat-label{font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+
+.trip-table{background:var(--navy2);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.trip-table-header{display:grid;grid-template-columns:80px 1fr 1fr 80px 80px;gap:8px;padding:12px 16px;background:var(--navy3);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:'DM Mono',monospace}
+.trip-row{display:grid;grid-template-columns:80px 1fr 1fr 80px 80px;gap:8px;padding:14px 16px;border-top:1px solid var(--border);font-size:13px;align-items:center}
+.trip-row:hover{background:rgba(255,255,255,.02)}
+.trip-id-cell{font-family:'DM Mono',monospace;font-size:11px;color:var(--blue2)}
+.trip-empty{padding:40px;text-align:center;color:var(--muted);font-size:13px}
+
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;font-family:'DM Mono',monospace}
+.badge-one{background:var(--blue3);color:var(--blue2)}
+.badge-round{background:rgba(76,175,112,.12);color:var(--green)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .4s ease both}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-mark">VA</div>
+      <div class="login-title">V.A. Transportation</div>
+      <div class="login-sub">Driver & Manager Portal</div>
+    </div>
+    <div class="field">
+      <label>Access Code</label>
+      <input type="text" id="accessCode" placeholder="Enter your access code" autocomplete="off">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Access Portal →</button>
+    <div class="login-error" id="loginError">Invalid access code. Contact Michael Johnson.</div>
+  </div>
+</div>
+
+<!-- PORTAL -->
+<div id="portal" style="display:none">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-mark">VA</div>
+      <div>
+        <div class="hdr-title">V.A. Transportation</div>
+        <div class="hdr-sub" id="hdrRole">Driver Portal</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-name">Welcome, <span id="hdrName"></span></div>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- MANAGER TABS -->
+  <div class="tabs" id="mgrTabs" style="display:none">
+    <div class="tab active" onclick="switchTab('trips')">Trip Log</div>
+    <div class="tab" onclick="switchTab('dashboard')">Dashboard</div>
+  </div>
+
+  <!-- TRIP LOG FORM -->
+  <div id="tripLogView">
+    <div class="main">
+      <div class="section">
+        <div class="section-title">Trip Info</div>
+        <div class="row-2">
+          <div class="field2"><label>Trip Date</label><input type="date" id="trip_date"></div>
+          <div class="field2"><label>Trip #</label><input type="text" id="trip_number" placeholder="001"></div>
+        </div>
+        <div class="row-2">
+          <div class="field2"><label>Vehicle #</label><input type="text" id="vehicle_number" placeholder="VAT-01"></div>
+          <div class="field2"><label>Appointment Time</label><input type="time" id="appointment_time"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Client Info</div>
+        <div class="field2"><label>Client Name *</label><input type="text" id="client_name" placeholder="Full name"></div>
+        <div class="row-2">
+          <div class="field2"><label>Client Phone</label><input type="tel" id="client_phone" placeholder="713-555-0100"></div>
+          <div class="field2"><label>Doctor / Facility</label><input type="text" id="doctor_facility" placeholder="Facility name"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Trip Type</div>
+        <div class="toggle-label">Trip Type</div>
+        <div class="toggle-row">
+          <button class="toggle-btn active" onclick="setToggle('trip_type','One-Way',this)">One-Way</button>
+          <button class="toggle-btn" onclick="setToggle('trip_type','Round-Trip',this)">Round-Trip</button>
+          <button class="toggle-btn" onclick="setToggle('trip_type','Companion',this)">Companion</button>
+        </div>
+        <div class="toggle-label">Wheelchair</div>
+        <div class="toggle-row">
+          <button class="toggle-btn active" onclick="setToggle('wheelchair','N',this)">No</button>
+          <button class="toggle-btn" onclick="setToggle('wheelchair','Y',this)">Yes</button>
+        </div>
+        <div class="toggle-label">ADA Assist</div>
+        <div class="toggle-row">
+          <button class="toggle-btn active" onclick="setToggle('ada_assist','N',this)">No</button>
+          <button class="toggle-btn" onclick="setToggle('ada_assist','Y',this)">Yes</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Legs</div>
+        <div class="leg-card">
+          <div class="leg-title">Leg 1 — A to B</div>
+          <div class="row-2">
+            <div class="field2"><label>P/U Time</label><input type="time" id="leg1_pu_time"></div>
+            <div class="field2"><label>Arrive Time</label><input type="time" id="leg1_arrive_time"></div>
+          </div>
+          <div class="field2"><label>P/U Address</label><input type="text" id="leg1_pu_address" placeholder="Street address"></div>
+          <div class="row-2">
+            <div class="field2"><label>Odom Start</label><input type="number" id="leg1_odom_start" placeholder="00000"></div>
+            <div class="field2"><label>Client Condition</label>
+              <select id="leg1_client_condition">
+                <option value="">— Select —</option>
+                <option>Good</option><option>Fair</option>
+                <option>Needs Assistance</option><option>Medical Alert</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="leg-card">
+          <div class="leg-title">Leg 2 — B to C (if applicable)</div>
+          <div class="row-2">
+            <div class="field2"><label>P/U Time</label><input type="time" id="leg2_pu_time"></div>
+            <div class="field2"><label>Arrive Time</label><input type="time" id="leg2_arrive_time"></div>
+          </div>
+          <div class="field2"><label>P/U Address</label><input type="text" id="leg2_pu_address" placeholder="Street address"></div>
+          <div class="row-2">
+            <div class="field2"><label>Odom Start</label><input type="number" id="leg2_odom_start" placeholder="00000"></div>
+            <div class="field2"><label>Client Condition</label>
+              <select id="leg2_client_condition">
+                <option value="">— Select —</option>
+                <option>Good</option><option>Fair</option>
+                <option>Needs Assistance</option><option>Medical Alert</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Drop-Off</div>
+        <div class="field2"><label>Drop Address</label><input type="text" id="drop_address" placeholder="Street address"></div>
+        <div class="row-2">
+          <div class="field2"><label>Drop Time</label><input type="time" id="drop_time"></div>
+          <div class="field2"><label>Odom Stop</label><input type="number" id="odom_stop" placeholder="00000"></div>
+        </div>
+        <div class="field2"><label>Final Client Condition</label>
+          <select id="final_client_condition">
+            <option value="">— Select —</option>
+            <option>Good</option><option>Fair</option>
+            <option>Needs Assistance</option><option>Medical Alert</option>
+          </select>
+        </div>
+        <div class="field2"><label>Notes</label><textarea id="notes" placeholder="Any incidents, delays, or additional notes..."></textarea></div>
+      </div>
+      <div id="tripResult" class="result"></div>
+    </div>
+    <div class="submit-bar">
+      <button class="submit-btn" id="submitBtn" onclick="submitTrip()">Submit Trip Log →</button>
+    </div>
+  </div>
+
+  <!-- MANAGER DASHBOARD -->
+  <div id="dashboardView" style="display:none">
+    <div class="mgr-main fade">
+      <div class="mgr-stats">
+        <div class="mgr-stat">
+          <div class="mgr-stat-val" id="statTotal">—</div>
+          <div class="mgr-stat-label">Total Trips</div>
+        </div>
+        <div class="mgr-stat">
+          <div class="mgr-stat-val" id="statToday">—</div>
+          <div class="mgr-stat-label">Today</div>
+        </div>
+        <div class="mgr-stat">
+          <div class="mgr-stat-val" id="statWheelchair">—</div>
+          <div class="mgr-stat-label">Wheelchair</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Recent Trips</div>
+      <div class="trip-table">
+        <div class="trip-table-header">
+          <div>Trip ID</div>
+          <div>Client</div>
+          <div>Date</div>
+          <div>Type</div>
+          <div>WC</div>
+        </div>
+        <div id="tripTableBody"><div class="trip-empty">Loading trips...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var ENDPOINT = 'https://script.google.com/macros/s/AKfycbxAYbA-5_QoHK_HJ4gINI99-s0zfxQhe4gjM5Bc3c3ltRG6LAxHVl04TXT3jLCoHac8/exec';
+
+var USERS = {
+  'DRIVE-01': { name: 'Michael Johnson', role: 'driver' },
+  'MGR-VAT': { name: 'Michael Johnson', role: 'manager' }
+};
+
+var currentUser = null;
+var toggleValues = { trip_type: 'One-Way', wheelchair: 'N', ada_assist: 'N' };
+
+function doLogin() {
+  var code = document.getElementById('accessCode').value.trim().toUpperCase();
+  var user = USERS[code];
+  if (!user) {
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  currentUser = user;
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('portal').style.display = 'block';
+  document.getElementById('hdrName').textContent = user.name;
+  document.getElementById('hdrRole').textContent = user.role === 'manager' ? 'Manager Portal' : 'Driver Portal';
+  if (user.role === 'manager') {
+    document.getElementById('mgrTabs').style.display = 'flex';
+    loadDashboard();
+  }
+  setDate();
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('accessCode').value = '';
+  document.getElementById('portal').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('mgrTabs').style.display = 'none';
+  document.getElementById('tripLogView').style.display = 'block';
+  document.getElementById('dashboardView').style.display = 'none';
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  event.target.classList.add('active');
+  if (tab === 'trips') {
+    document.getElementById('tripLogView').style.display = 'block';
+    document.getElementById('dashboardView').style.display = 'none';
+  } else {
+    document.getElementById('tripLogView').style.display = 'none';
+    document.getElementById('dashboardView').style.display = 'block';
+    loadDashboard();
+  }
+}
+
+function setToggle(key, val, btn) {
+  toggleValues[key] = val;
+  var group = btn.parentElement;
+  group.querySelectorAll('.toggle-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function setDate() {
+  var now = new Date();
+  var y = now.getFullYear();
+  var m = String(now.getMonth()+1).padStart(2,'0');
+  var d = String(now.getDate()).padStart(2,'0');
+  document.getElementById('trip_date').value = y+'-'+m+'-'+d;
+}
+
+async function submitTrip() {
+  var clientName = document.getElementById('client_name').value.trim();
+  if (!clientName) { showResult('tripResult','error','Please enter the client name.'); return; }
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  var tripDate = document.getElementById('trip_date').value;
+  var formatted = tripDate ? new Date(tripDate + 'T12:00:00').toLocaleDateString() : new Date().toLocaleDateString();
+  var params = new URLSearchParams({
+    action: 'vat',
+    trip_date: formatted,
+    trip_number: document.getElementById('trip_number').value,
+    driver: currentUser.name,
+    vehicle_number: document.getElementById('vehicle_number').value,
+    client_name: clientName,
+    client_phone: document.getElementById('client_phone').value,
+    trip_type: toggleValues.trip_type,
+    wheelchair: toggleValues.wheelchair,
+    ada_assist: toggleValues.ada_assist,
+    appointment_time: document.getElementById('appointment_time').value,
+    doctor_facility: document.getElementById('doctor_facility').value,
+    leg1_pu_time: document.getElementById('leg1_pu_time').value,
+    leg1_pu_address: document.getElementById('leg1_pu_address').value,
+    leg1_arrive_time: document.getElementById('leg1_arrive_time').value,
+    leg1_odom_start: document.getElementById('leg1_odom_start').value,
+    leg1_client_condition: document.getElementById('leg1_client_condition').value,
+    leg2_pu_time: document.getElementById('leg2_pu_time').value,
+    leg2_pu_address: document.getElementById('leg2_pu_address').value,
+    leg2_arrive_time: document.getElementById('leg2_arrive_time').value,
+    leg2_odom_start: document.getElementById('leg2_odom_start').value,
+    leg2_client_condition: document.getElementById('leg2_client_condition').value,
+    drop_address: document.getElementById('drop_address').value,
+    drop_time: document.getElementById('drop_time').value,
+    odom_stop: document.getElementById('odom_stop').value,
+    final_client_condition: document.getElementById('final_client_condition').value,
+    invoice_sent: 'No',
+    notes: document.getElementById('notes').value
+  });
+  try {
+    var resp = await fetch(ENDPOINT + '?' + params.toString());
+    var data = await resp.json();
+    if (data.success) {
+      showResult('tripResult','success','<div class="trip-id">' + data.trip_id + '</div>Trip logged. Have a safe ride.');
+      btn.textContent = '✓ Trip Logged';
+      btn.classList.add('success');
+      clearTripForm();
+    } else { throw new Error(data.error || 'Unknown error'); }
+  } catch(e) {
+    showResult('tripResult','error','Error: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Submit Trip Log →';
+  }
+}
+
+function clearTripForm() {
+  ['trip_number','client_name','client_phone','doctor_facility','vehicle_number',
+   'leg1_pu_address','leg1_odom_start','leg2_pu_address','leg2_odom_start',
+   'drop_address','odom_stop','notes'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  ['leg1_pu_time','leg1_arrive_time','leg2_pu_time','leg2_arrive_time','drop_time','appointment_time'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  ['leg1_client_condition','leg2_client_condition','final_client_condition'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.selectedIndex = 0;
+  });
+  setTimeout(function(){
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.textContent = 'Submit Trip Log →';
+    btn.classList.remove('success');
+  }, 3000);
+}
+
+async function loadDashboard() {
+  try {
+    var resp = await fetch(ENDPOINT + '?action=vat_list');
+    var data = await resp.json();
+    if (data && data.trips) {
+      var trips = data.trips;
+      document.getElementById('statTotal').textContent = trips.length;
+      var today = new Date().toLocaleDateString();
+      var todayTrips = trips.filter(function(t){ return t.trip_date === today; });
+      document.getElementById('statToday').textContent = todayTrips.length;
+      var wcTrips = trips.filter(function(t){ return t.wheelchair === 'Y'; });
+      document.getElementById('statWheelchair').textContent = wcTrips.length;
+      var html = trips.slice(0,20).map(function(t) {
+        return '<div class="trip-row">' +
+          '<div class="trip-id-cell">' + (t.trip_id||'—') + '</div>' +
+          '<div style="font-size:13px;color:#fff">' + (t.client_name||'—') + '</div>' +
+          '<div style="font-size:12px;color:var(--muted)">' + (t.trip_date||'—') + '</div>' +
+          '<div><span class="badge ' + (t.trip_type==='Round-Trip'?'badge-round':'badge-one') + '">' + (t.trip_type||'—').replace('-Trip','') + '</span></div>' +
+          '<div style="font-size:12px;color:var(--muted)">' + (t.wheelchair||'N') + '</div>' +
+        '</div>';
+      }).join('');
+      document.getElementById('tripTableBody').innerHTML = html || '<div class="trip-empty">No trips logged yet.</div>';
+    }
+  } catch(e) {
+    document.getElementById('tripTableBody').innerHTML = '<div class="trip-empty">Connect to sheet to load trips.</div>';
+    document.getElementById('statTotal').textContent = '—';
+    document.getElementById('statToday').textContent = '—';
+    document.getElementById('statWheelchair').textContent = '—';
+  }
+}
+
+function showResult(id, type, msg) {
+  var el = document.getElementById(id);
+  el.className = 'result ' + type;
+  el.innerHTML = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+document.getElementById('accessCode').addEventListener('keydown', function(e){
+  if(e.key==='Enter') doLogin();
+});
+</script>
+</body>
+</html>
